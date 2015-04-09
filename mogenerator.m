@@ -5,6 +5,7 @@
 
 #import "mogenerator.h"
 #import "RegexKitLite.h"
+#import "NSEntityDescription+MOGenerator.h"
 
 static NSString * const kTemplateVar = @"TemplateVar";
 NSString  *gCustomBaseClass;
@@ -982,7 +983,8 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
             }
         }
         nsenumerate ([model entitiesWithACustomSubclassInConfiguration:configuration verbose:NO], NSEntityDescription, entity) {
-            [entityFilesByName removeObjectForKey:[entity managedObjectClassName]];
+            entity.isSwiftClass = _swift;
+            [entityFilesByName removeObjectForKey:[entity derivedManagedObjectClassName]];
         }
         nsenumerate(entityFilesByName, NSSet, ophanedFiles) {
             nsenumerate(ophanedFiles, NSString, ophanedFile) {
@@ -1052,6 +1054,9 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
                         *machineHFiles = [NSMutableArray array];
         
         nsenumerate ([model entitiesWithACustomSubclassInConfiguration:configuration verbose:YES], NSEntityDescription, entity) {
+            entity.isSwiftClass = _swift;
+            NSLog(@"Processing entity %@ derived class %@",entity.managedObjectClassName,entity.derivedManagedObjectClassName);
+
             NSString *generatedMachineH = [machineH executeWithObject:entity sender:nil];
             NSString *generatedMachineM = [machineM executeWithObject:entity sender:nil];
             NSString *generatedHumanH = [humanH executeWithObject:entity sender:nil];
@@ -1063,13 +1068,14 @@ NSString *ApplicationSupportSubdirectoryName = @"mogenerator";
             generatedHumanH = [generatedHumanH stringByReplacingOccurrencesOfRegex:@"([ \t]*(\n|\r|\r\n)){2,}" withString:@"\n\n"];
             generatedHumanM = [generatedHumanM stringByReplacingOccurrencesOfRegex:@"([ \t]*(\n|\r|\r\n)){2,}" withString:@"\n\n"];
             
-            NSString *entityClassName = [entity managedObjectClassName];
+            NSString *entityClassName = [entity derivedManagedObjectClassName];
             BOOL machineDirtied = NO;
             
             // Machine header files.
             NSString *extension = (_swift ? @"swift" : @"h");
             NSString *machineHFileName = [machineDir stringByAppendingPathComponent:
                                     [NSString stringWithFormat:@"_%@.%@", entityClassName, extension]];
+            NSLog(@"Processing entity %@ derived class %@ filename %@",entity.managedObjectClassName,entity.derivedManagedObjectClassName,machineHFileName);
             if (_listSourceFiles) {
                 [machineHFiles addObject:machineHFileName];
             } else {

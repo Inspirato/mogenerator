@@ -1,10 +1,10 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to <$managedObjectClassName$>.swift instead.
+// Make changes to <$derivedManagedObjectClassName$>.swift instead.
 
 import CoreData
 
 @objc
-class _<$managedObjectClassName$>: <$customSuperentity$> {
+public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
 
     <$if noninheritedAttributes.@count > 0$>
     struct Attributes {<$foreach Attribute noninheritedAttributes do$>
@@ -32,11 +32,11 @@ class _<$managedObjectClassName$>: <$customSuperentity$> {
 
     // MARK: - Class methods
     
-    <$if hasCustomSuperentity$>override <$endif$>class func entityName () -> String {
+    <$if hasCustomSuperentity$>override <$endif$>public class func entityName () -> String {
         return "<$name$>"
     }
 
-    <$if hasCustomSuperentity$>override <$endif$>class func entity(managedObjectContext: NSManagedObjectContext!) -> NSEntityDescription! {
+    <$if hasCustomSuperentity$>override <$endif$>public class func entity(managedObjectContext: NSManagedObjectContext!) -> NSEntityDescription! {
         return NSEntityDescription.entityForName(self.entityName(), inManagedObjectContext: managedObjectContext);
     }
 
@@ -47,7 +47,7 @@ class _<$managedObjectClassName$>: <$customSuperentity$> {
     }
 
     convenience init(managedObjectContext: NSManagedObjectContext!) {
-        let entity = _<$managedObjectClassName$>.entity(managedObjectContext)
+        let entity = _<$derivedManagedObjectClassName$>.entity(managedObjectContext)
         self.init(entity: entity, insertIntoManagedObjectContext: managedObjectContext)
     }
 
@@ -57,18 +57,18 @@ class _<$managedObjectClassName$>: <$customSuperentity$> {
 <$if Attribute.hasScalarAttributeType$>
 <$if Attribute.isReadonly$>
     @NSManaged
-    let <$Attribute.name$>: NSNumber?
+    public let <$Attribute.name$>: NSNumber?
 <$else$>
     @NSManaged
-    var <$Attribute.name$>: NSNumber?
+    public var <$Attribute.name$>: NSNumber?
 <$endif$>
 <$else$>
 <$if Attribute.isReadonly$>
     @NSManaged
-    let <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$endif$>
+    public let <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$endif$>
 <$else$>
     @NSManaged
-    var <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$endif$>
+    public var <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$endif$>
 <$endif$>
 <$endif$>
     // func validate<$Attribute.name.initialCapitalString$>(value: AutoreleasingUnsafePointer<AnyObject>, error: NSErrorPointer) {}
@@ -79,11 +79,11 @@ class _<$managedObjectClassName$>: <$customSuperentity$> {
 <$foreach Relationship noninheritedRelationships do$>
 <$if Relationship.isToMany$>
     @NSManaged
-    var <$Relationship.name$>: <$Relationship.immutableCollectionClassName$>
+    public var <$Relationship.name$>: <$Relationship.immutableCollectionClassName$>
 
 <$else$>
     @NSManaged
-    var <$Relationship.name$>: <$Relationship.destinationEntity.managedObjectClassName$><$if Relationship.isOptional$>?<$endif$>
+    public var <$Relationship.name$>: <$Relationship.destinationEntity.derivedManagedObjectClassName$><$if Relationship.isOptional$>?<$endif$>
 
     // func validate<$Relationship.name.initialCapitalString$>(value: AutoreleasingUnsafePointer<AnyObject>, error: NSErrorPointer) {}
 <$endif$>
@@ -155,12 +155,12 @@ class _<$managedObjectClassName$>: <$customSuperentity$> {
 
 <$foreach FetchedProperty noninheritedFetchedProperties do$>
     @NSManaged
-    let <$FetchedProperty.name$>: [<$FetchedProperty.entity.managedObjectClassName$>]
+    let <$FetchedProperty.name$>: [<$FetchedProperty.entity.derivedManagedObjectClassName$>]
 <$endforeach do$>
 }
 
 <$foreach Relationship noninheritedRelationships do$><$if Relationship.isToMany$>
-extension _<$managedObjectClassName$> {
+extension _<$derivedManagedObjectClassName$> {
 
     func add<$Relationship.name.initialCapitalString$>(objects: <$Relationship.immutableCollectionClassName$>) {
         let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
@@ -174,13 +174,13 @@ extension _<$managedObjectClassName$> {
         self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
     }
 
-    func add<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.managedObjectClassName$>!) {
+    func add<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.derivedManagedObjectClassName$>!) {
         let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
         mutable.addObject(value)
         self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
     }
 
-    func remove<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.managedObjectClassName$>!) {
+    func remove<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.derivedManagedObjectClassName$>!) {
         let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
         mutable.removeObject(value)
         self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
