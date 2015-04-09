@@ -58,18 +58,18 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
 <$if Attribute.hasScalarAttributeType$>
 <$if Attribute.isReadonly$>
     @NSManaged
-    public let <$Attribute.name$>: NSNumber?
+    public let <$Attribute.name$>: NSNumber<$if Attribute.isOptional$>?<$else$>!<$endif$>
 <$else$>
     @NSManaged
-    public var <$Attribute.name$>: NSNumber?
+    public var <$Attribute.name$>: NSNumber<$if Attribute.isOptional$>?<$else$>!<$endif$>
 <$endif$>
 <$else$>
 <$if Attribute.isReadonly$>
     @NSManaged
-    public let <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$endif$>
+    public let <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$else$>!<$endif$>
 <$else$>
     @NSManaged
-    public var <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$endif$>
+    public var <$Attribute.name$>: <$Attribute.objectAttributeType$><$if Attribute.isOptional$>?<$else$>!<$endif$>
 <$endif$>
 <$endif$>
     // func validate<$Attribute.name.initialCapitalString$>(value: AutoreleasingUnsafePointer<AnyObject>, error: NSErrorPointer) {}
@@ -84,7 +84,7 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
 
 <$else$>
     @NSManaged
-    public var <$Relationship.name$>: <$Relationship.destinationEntity.derivedManagedObjectClassName$><$if Relationship.isOptional$>?<$endif$>
+    public var <$Relationship.name$>: <$Relationship.destinationEntity.derivedManagedObjectClassName$><$if Relationship.isOptional$>?<$else$>!<$endif$>
 
     // func validate<$Relationship.name.initialCapitalString$>(value: AutoreleasingUnsafePointer<AnyObject>, error: NSErrorPointer) {}
 <$endif$>
