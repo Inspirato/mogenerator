@@ -31,19 +31,19 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
     <$endif$>
 
     // MARK: - Class methods
-    
-    <$if hasCustomSuperentity$>override <$endif$>public class func entityName () -> String {
+
+    <$if hasCustomSuperentity$>override <$endif$>public class func entityName() -> String {
         return "<$name$>"
     }
 
     <$if hasCustomSuperentity$>override <$endif$>public class func entity(managedObjectContext: NSManagedObjectContext!) -> NSEntityDescription! {
-        let copiedName = self.entityName().mutableCopy() as NSString // workaround for rdar://problem/17540296
-        return NSEntityDescription.entityForName(copiedName, inManagedObjectContext: managedObjectContext);
+        let copiedName = self.entityName().mutableCopy() as! NSString // workaround for rdar://problem/17540296
+        return NSEntityDescription.entityForName(copiedName as String, inManagedObjectContext: managedObjectContext)
     }
 
     // MARK: - Life cycle methods
 
-    public override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext!) {
+    public override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
 
@@ -80,7 +80,7 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
 <$foreach Relationship noninheritedRelationships do$>
 <$if Relationship.isToMany$>
     @NSManaged
-    public var <$Relationship.name$>: <$Relationship.immutableCollectionClassName$>
+    public var <$Relationship.name$>: <$if Relationship.jr_isOrdered$>NSOrderedSet<$else$>Set<<$Relationship.destinationEntity.derivedManagedObjectClassName$>><$endif$>
 
 <$else$>
     @NSManaged
@@ -105,13 +105,9 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
         let fetchRequest = model.fetchRequestFromTemplateWithName("<$FetchRequest.name$>", substitutionVariables: substitutionVariables)
         assert(fetchRequest != nil, "Can't find fetch request named \"<$FetchRequest.name$>\".")
 
-        var error: NSError? = nil
-        var result: AnyObject? = nil
-        let results = managedObjectContext.executeFetchRequest(fetchRequest, error: &error)
-
-        if error != nil {
-            outError.memory = error
-        } else {
+        var error: NSError?
+        var result: AnyObject?
+        if let results = managedObjectContext.executeFetchRequest(fetchRequest, error: &error) {
             switch results.count {
             case 0:
                 // Nothing found matching the fetch request. That's cool, though: we'll just return nil.
@@ -124,6 +120,8 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
                     substitutionVariables,
                     results);
             }
+        } else if outError != nil {
+            outError.memory = error
         }
 
         return result;
@@ -142,10 +140,10 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
         let fetchRequest = model.fetchRequestFromTemplateWithName("<$FetchRequest.name$>", substitutionVariables: substitutionVariables)
         assert(fetchRequest != nil, "Can't find fetch request named \"<$FetchRequest.name$>\".")
 
-        var error: NSError? = nil
+        var error: NSError?
         let results = managedObjectContext.executeFetchRequest(fetchRequest, error: &error)
 
-        if error != nil {
+        if results == nil && outError != nil {
             outError.memory = error
         }
 
@@ -163,29 +161,47 @@ public class _<$derivedManagedObjectClassName$>: <$customSuperentity$> {
 <$foreach Relationship noninheritedRelationships do$><$if Relationship.isToMany$>
 extension _<$derivedManagedObjectClassName$> {
 
-    public func add<$Relationship.name.initialCapitalString$>(objects: <$Relationship.immutableCollectionClassName$>) {
-        let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
-        mutable.union<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set(objects)
-        self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
+<$if Relationship.jr_isOrdered$>
+    public func add<$Relationship.name.initialCapitalString$>(objects: NSOrderedSet) {
+        let mutable = self.<$Relationship.name$>.mutableCopy() as! NSMutableOrderedSet
+        mutable.unionOrderedSet(objects)
+        self.<$Relationship.name$> = mutable.copy() as! NSOrderedSet
     }
 
-    public func remove<$Relationship.name.initialCapitalString$>(objects: <$Relationship.immutableCollectionClassName$>) {
-        let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
-        mutable.minus<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set(objects)
-        self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
+    public func remove<$Relationship.name.initialCapitalString$>(objects: NSOrderedSet) {
+        let mutable = self.<$Relationship.name$>.mutableCopy() as! NSMutableOrderedSet
+        mutable.minusOrderedSet(objects)
+        self.<$Relationship.name$> = mutable.copy() as! NSOrderedSet
     }
 
     public func add<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.derivedManagedObjectClassName$>!) {
-        let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
+        let mutable = self.<$Relationship.name$>.mutableCopy() as! NSMutableOrderedSet
         mutable.addObject(value)
-        self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
+        self.<$Relationship.name$> = mutable.copy() as! NSOrderedSet
     }
 
     public func remove<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.derivedManagedObjectClassName$>!) {
-        let mutable = self.<$Relationship.name$>.mutableCopy() as NSMutable<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
+        let mutable = self.<$Relationship.name$>.mutableCopy() as! NSMutableOrderedSet
         mutable.removeObject(value)
-        self.<$Relationship.name$> = mutable.copy() as NS<$if Relationship.jr_isOrdered$>Ordered<$endif$>Set
+        self.<$Relationship.name$> = mutable.copy() as! NSOrderedSet
     }
+<$else$>
+    public func add<$Relationship.name.initialCapitalString$>(objects: Set<<$Relationship.destinationEntity.derivedManagedObjectClassName$>>) {
+        self.<$Relationship.name$>.unionInPlace(objects)
+    }
+
+    public func remove<$Relationship.name.initialCapitalString$>(objects: Set<<$Relationship.destinationEntity.derivedManagedObjectClassName$>>) {
+        self.<$Relationship.name$>.subtractInPlace(objects)
+    }
+
+    public func add<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.derivedManagedObjectClassName$>!) {
+        self.<$Relationship.name$>.insert(value)
+    }
+
+    public func remove<$Relationship.name.initialCapitalString$>Object(value: <$Relationship.destinationEntity.derivedManagedObjectClassName$>!) {
+        self.<$Relationship.name$>.remove(value)
+    }
+<$endif$>
 
 }
 <$endif$><$endforeach do$>
